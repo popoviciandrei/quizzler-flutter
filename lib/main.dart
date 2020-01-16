@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:quizzler/quiz_brain.dart';
 import 'package:quizzler/score_keeper.dart';
@@ -30,22 +31,21 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-  void checkAnswer(bool userCheckedAnswer) => setState(() {
-        var correctAnswer = quizBrain.getRightAnswer();
+  void checkAnswer(bool userCheckedAnswer) {
+    quizBrain.debug();
 
-        if (correctAnswer == userCheckedAnswer) {
-          scoreKeeper.goodAnswer();
-        } else {
-          scoreKeeper.badAnswer();
-        }
+    setState(() {
+      var correctAnswer = quizBrain.getRightAnswer();
 
-        if (quizBrain.isLastQuestion()) {
-          //quizBrain.reset();
-          //scoreKeeper.reset();
-        } else {
-          quizBrain.nextQuestion();
-        }
-      });
+      if (correctAnswer == userCheckedAnswer) {
+        scoreKeeper.goodAnswer();
+      } else {
+        scoreKeeper.badAnswer();
+      }
+
+      quizBrain.nextQuestion();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
