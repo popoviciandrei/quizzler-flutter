@@ -10,20 +10,18 @@ class QuizBrain {
   ];
 
   String getQuestionText() => _questions[_questionNumber].questionText;
+
   bool getRightAnswer() => _questions[_questionNumber].questionAnswer;
 
-  void nextQuestion() {
-    //if (!isLastQuestion()) {
-    _questionNumber++;
-    //}
-  }
+  void nextQuestion() => _questionNumber++;
 
-  bool isLastQuestion() => (_questionNumber == _questions.length - 1);
-  bool noMoreQuestions() => (_questionNumber == _questions.length);
+  bool isFinished() => (_questionNumber >= _questions.length - 1);
 
-  void debug() {
-    print('Counter: $_questionNumber, No if Questions: ${_questions.length} ');
-  }
+  bool shouldReset() => (_questionNumber >= _questions.length);
+
+  int getIndex() => _questionNumber;
+
+  int getQLength() => _questions.length;
 
   void reset() => _questionNumber = 0;
 }

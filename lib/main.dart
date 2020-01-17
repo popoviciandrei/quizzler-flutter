@@ -32,19 +32,57 @@ class QuizPage extends StatefulWidget {
 
 class _QuizPageState extends State<QuizPage> {
   void checkAnswer(bool userCheckedAnswer) {
-    quizBrain.debug();
+    if (quizBrain.getQLength() > scoreKeeper.answers.length) {
+      setState(() {
+        var correctAnswer = quizBrain.getRightAnswer();
 
-    setState(() {
-      var correctAnswer = quizBrain.getRightAnswer();
+        if (correctAnswer == userCheckedAnswer) {
+          scoreKeeper.goodAnswer();
+        } else {
+          scoreKeeper.badAnswer();
+        }
 
-      if (correctAnswer == userCheckedAnswer) {
-        scoreKeeper.goodAnswer();
-      } else {
-        scoreKeeper.badAnswer();
-      }
+        if (!quizBrain.isFinished()) {
+          quizBrain.nextQuestion();
+        }
+      });
+    }
 
-      quizBrain.nextQuestion();
-    });
+    if (quizBrain.getQLength() == scoreKeeper.answers.length) {
+      // generate dialog
+      Widget dialog = AlertDialog(
+        title: Text("Test finished"),
+        content: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Text('Results:'),
+            ...scoreKeeper.answers,
+          ],
+        ),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Reset'),
+            onPressed: () {
+              setState(() {
+                scoreKeeper.reset();
+                quizBrain.reset();
+                Navigator.of(context).pop();
+              });
+            },
+          ),
+          FlatButton(
+            child: Text('Cancel'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          )
+        ],
+      );
+
+      showDialog(
+          context: context, builder: (_) => dialog, barrierDismissible: false);
+    }
+    ;
   }
 
   @override
@@ -108,7 +146,13 @@ class _QuizPageState extends State<QuizPage> {
         ),
         Expanded(
           flex: 1,
-          child: Row(children: scoreKeeper.answers),
+          child: Row(children: [
+            Text(
+              'Answers:',
+              style: TextStyle(color: Colors.white),
+            ),
+            ...scoreKeeper.answers
+          ]),
         )
       ],
     );
